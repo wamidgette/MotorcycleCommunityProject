@@ -293,6 +293,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Rider\Error.cshtml" />
     <Content Include="Views\Rider\List.cshtml" />
+    <Content Include="Views\Rider\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

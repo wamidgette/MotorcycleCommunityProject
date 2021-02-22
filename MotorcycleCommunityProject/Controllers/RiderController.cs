@@ -62,9 +62,10 @@ namespace MotorcycleCommunityProject.Controllers
             return View(RidersDto);*/
         }
 
+
         public ActionResult Error()
         {
-            return View()
+            return View();
         }
 
         // GET: Rider/Show/5

@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Add a Rider to the System</h2>
+
+<form method="post" action="/Rider/Show">
+    <ul>
+        <li>
+            <label for="FirstName">First Name</label>
+            <input id="FirstName" name="FirstName" type="text" />
+        </li>
+        <li>
+            <label for="LastName">Last Name</label>
+            <input id="LastName" name="LastName" type="text" />
+        </li>
+        <li>
+            <label for="Bio">Bio</label>
+            <input id="Bio" name="Bio" type="text" />
+        </li>
+        <li>
+            <label for="BikeSize">Bike Size</label>
+            <input id="BikeSize" name="BikeSize" type="text" />
+        </li>
+        <li>
+            <label for="Age">Age</label>
+            <input id="Age" name="Age" type="text" />
+        </li>
+    </ul>
+    <button type="submit" name="submit">Create Rider</button>
+</form>
