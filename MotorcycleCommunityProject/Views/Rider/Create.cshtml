@@ -1,31 +1,45 @@
-﻿@{
+﻿@model MotorcycleCommunityProject.Models.RiderDto
+
+@{
     ViewBag.Title = "Create";
 }
 
 <h2>Add a Rider to the System</h2>
+<!-- In lieu of <form>, use FormCollection function Html.BeginForm to pass as POST request-->
+@using (Html.BeginForm())
+{
+    //RiderController will look for this token to approve the request
+    @Html.AntiForgeryToken()
 
-<form method="post" action="/Rider/Show">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <ul>
+        @*Validation not working as it should - will come back to this later
+        *@
         <li>
-            <label for="FirstName">First Name</label>
-            <input id="FirstName" name="FirstName" type="text" />
+            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
         </li>
         <li>
-            <label for="LastName">Last Name</label>
-            <input id="LastName" name="LastName" type="text" />
+            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
         </li>
         <li>
-            <label for="Bio">Bio</label>
-            <input id="Bio" name="Bio" type="text" />
+            @Html.LabelFor(model => model.Bio, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.Bio, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Bio, "", new { @class = "text-danger" })
         </li>
         <li>
-            <label for="BikeSize">Bike Size</label>
-            <input id="BikeSize" name="BikeSize" type="text" />
+            @Html.LabelFor(model => model.BikeSize, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.BikeSize, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.BikeSize, "", new { @class = "text-danger" })
         </li>
         <li>
-            <label for="Age">Age</label>
-            <input id="Age" name="Age" type="text" />
+            @Html.LabelFor(model => model.Age, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.Age, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Age, "", new { @class = "text-danger" })
         </li>
     </ul>
-    <button type="submit" name="submit">Create Rider</button>
-</form>
+    <button type="submit" value="Create">Create Rider</button>
+}

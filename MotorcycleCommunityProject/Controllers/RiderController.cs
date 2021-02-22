@@ -83,8 +83,11 @@ namespace MotorcycleCommunityProject.Controllers
 
         // POST: Rider/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Rider NewRiderInfo)
         {
+            Debug.WriteLine(NewRiderInfo.Age); /*Object is transferring successfully to mvc controller */
+            string request = "RiderData/addRider";
             try
             {
                 // TODO: Add insert logic here
