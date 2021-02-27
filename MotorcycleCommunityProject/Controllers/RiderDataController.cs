@@ -48,7 +48,7 @@ namespace MotorcycleCommunityProject.Controllers
             return Ok(RiderDtos);
         }
 
-        // GET: api/Riders/5
+        // GET: api/Riders/5 - This will be your find method when you implement the search feature later on 
         [ResponseType(typeof(Rider))]
         public async Task<IHttpActionResult> GetRider(int id)
         {
@@ -61,70 +61,62 @@ namespace MotorcycleCommunityProject.Controllers
             return Ok(rider);
         }
 
-        // PUT: api/Riders/5
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutRider(int id, Rider rider)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != rider.RiderId)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(rider).State = EntityState.Modified;
-
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RiderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        // POST: api/Riders
-        [ResponseType(typeof(Rider))]
-        public async Task<IHttpActionResult> PostRider(Rider rider)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            db.Riders.Add(rider);
-            await db.SaveChangesAsync();
-
-            return CreatedAtRoute("DefaultApi", new { id = rider.RiderId }, rider);
-        }
+        // PUT: api/Riders/addRider
+        /// <summary>
+        /// Recieves a HttpRequest with a rider json object, and adds the rider to the rider database 
+        /// </summary>
+        /// <param Rider="NewRider"></param>
+        /// <returns>Returns Http OK status to the Rider/Create mvc controller</returns>
 
         // DELETE: api/Riders/5
         [ResponseType(typeof(Rider))]
-        public async Task<IHttpActionResult> DeleteRider(int id)
+        [HttpPost]
+        //FromBody accesses the httpmessage content as the type of object specified
+        public IHttpActionResult addRider([FromBody] Rider NewRider)
         {
-            Rider rider = await db.Riders.FindAsync(id);
-            if (rider == null)
+            Debug.WriteLine("THE RIDER FIRST NAME IS: " + NewRider.FirstName);
+            
+            if(!ModelState.IsValid)
+            {
+                //if rider object is not valid, return badrequest to mvc Create()
+                return BadRequest(ModelState);
+            }
+
+            //if the object in the http message matches the Rider object properties, add to database
+            db.Riders.Add(NewRider);
+            db.SaveChanges();
+            //Rider will now have been entered into the database and an Id generated
+            //Send Id back to MVC controller in order to display details on "show" view
+            return Ok(NewRider.RiderId);
+        }
+
+        /// <summary>
+        /// Finds the rider with the unique riderId as parameter id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>The rider object with the corresponding id</returns>
+        [HttpGet]
+        [ResponseType(typeof(RiderDto))]
+        public IHttpActionResult findRider(int id)
+        {
+            Rider Rider = db.Riders.Find(id);
+
+            if (Rider == null)
             {
                 return NotFound();
             }
 
-            db.Riders.Remove(rider);
-            await db.SaveChangesAsync();
+            RiderDto RiderDto = new RiderDto
+            {
+                RiderId = Rider.RiderId,
+                FirstName = Rider.FirstName,
+                LastName = Rider.LastName,
+                Bio = Rider.Bio,
+                BikeSize = Rider.BikeSize,
+                Age = Rider.Age
+            };
 
-            return Ok(rider);
+            return Ok(RiderDto);
         }
 
         protected override void Dispose(bool disposing)
