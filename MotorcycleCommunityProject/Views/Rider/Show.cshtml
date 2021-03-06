@@ -1,0 +1,55 @@
+﻿@model MotorcycleCommunityProject.Models.RiderDto
+@{
+    ViewBag.Title = "Show";
+}
+
+<h2>Show</h2>
+<a href="../List">Back to List</a>
+<a href="../Edit/@Model.RiderId">Edit</a>
+
+<table class="table-bordered">
+
+    <thead>
+        <tr>
+            <th>Rider Attribute</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Rider ID</td>
+            <td>@Model.RiderId</td>
+        </tr>
+        <tr>
+            <td>First Name</td>
+            <td>@Model.FirstName</td>
+        </tr>
+        <tr>
+            <td>Last Name</td>
+            <td>@Model.LastName</td>
+        </tr>
+        <tr>
+            <td>Bio</td>
+            <td>@Model.Bio</td>
+        </tr>
+        <tr>
+            <td>Bike Size</td>
+            <td>@Model.BikeSize</td>
+        </tr>
+        <tr>
+            <td>Age</td>
+            <td>@Model.Age</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Must be a form and not a link because this is a post request
+    Specify in beginform, the "Method", "Controller" and "Content"-->
+@using (Html.BeginForm("Delete", "Rider", new { id = Model.RiderId }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-actions">
+        <button type="submit" value="Delete">Delete</button>
+    </div>
+}
+

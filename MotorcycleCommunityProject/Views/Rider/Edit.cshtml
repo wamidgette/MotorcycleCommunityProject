@@ -1,21 +1,19 @@
 ﻿@model MotorcycleCommunityProject.Models.RiderDto
-
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Edit";
 }
 
-<h2>Add a Rider to the System</h2>
-<a href="List">Back to List</a>
-<!-- In lieu of <form>, use FormCollection function Html.BeginForm to pass as POST request-->
+<h2>Edit Rider Details</h2>
+<a href="../List">Back to List</a>
+
 @using (Html.BeginForm())
 {
     //RiderController will look for this token to approve the request
     @Html.AntiForgeryToken()
 
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.RiderId)
     <ul>
-        @*Validation not working as it should - will come back to this later
-        *@
         <li>
             @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label" })
             @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
@@ -42,5 +40,9 @@
             @Html.ValidationMessageFor(model => model.Age, "", new { @class = "text-danger" })
         </li>
     </ul>
-    <button type="submit" value="Create">Create Rider</button>
+    <button type="submit" value="Edit">Create Rider</button>
+
+    <div>
+
+    </div>
 }

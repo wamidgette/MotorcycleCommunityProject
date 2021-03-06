@@ -34,6 +34,7 @@ namespace MotorcycleCommunityProject.Controllers
             client.BaseAddress = new Uri("https://localhost:44368/api/");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
+
         // GET: Rider/List
         public ActionResult List()
         {
@@ -52,14 +53,6 @@ namespace MotorcycleCommunityProject.Controllers
             {
                 return RedirectToAction("Error");
             }
-
-
-
-            /* Previously attempted to access directly - IHTTPActionResult 
-            var controller = new RiderDataController();
-            var result = controller.GetRiders() as OkNegotiatedContentResult<List<RiderDto>>;
-            List<RiderDto> RidersDto = result.Content;
-            return View(RidersDto);*/
         }
 
 
@@ -69,10 +62,6 @@ namespace MotorcycleCommunityProject.Controllers
         }
 
 
-        
-       
-
-        
         // GET: Rider/Create
         public ActionResult Create()
         {
@@ -85,7 +74,7 @@ namespace MotorcycleCommunityProject.Controllers
         public ActionResult Create(Rider NewRider)
         {
             //Serialize method returns the object as a Json object - otherwise no way to see contents
-            Debug.WriteLine("NEWRIDER OBJECT: " + JsSerializer.Serialize(NewRider));  
+            Debug.WriteLine("NEWRIDER OBJECT: " + JsSerializer.Serialize(NewRider));
             //string to send request to
             string requestAddress = "RiderData/addRider";
             //Create content which sends the NewRiderInfo as a Json object
@@ -97,11 +86,11 @@ namespace MotorcycleCommunityProject.Controllers
             HttpResponseMessage response = client.PostAsync(requestAddress, content).Result;
             Debug.WriteLine("THIS IS THE SERVER RESPONSE: " + response);
             //if response is success status code, display the details of the rider in the "Show" view
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 //reads riderId from response and sends to show method
                 int RiderId = response.Content.ReadAsAsync<int>().Result;
-                return RedirectToAction("Show", RiderId);
+                return RedirectToAction("Show", new { id = RiderId });
             }
 
             else
@@ -119,6 +108,7 @@ namespace MotorcycleCommunityProject.Controllers
         [HttpGet]
         public ActionResult Show(int id)
         {
+            Debug.WriteLine("YOU ARE IN THE SHOW CONTROLLER");
             //resquest from the findRider controller the team with associated id
             string requestAddress = "RiderData/findRider/" + id;
             HttpResponseMessage response = client.GetAsync(requestAddress).Result;
@@ -137,47 +127,68 @@ namespace MotorcycleCommunityProject.Controllers
             }
         }
 
-        // GET: Rider/Edit/5
+        [HttpGet]
         public ActionResult Edit(int id)
         {
-            return View();
+            //logic follows 
+            string requestAddress = "RiderData/findRider/" + id;
+            HttpResponseMessage response = client.GetAsync(requestAddress).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                //Will later have to also request trip data so the page will display the trips a rider is on
+                //Need viewmodel for this
+                RiderDto Rider = response.Content.ReadAsAsync<RiderDto>().Result;
+                return View(Rider);
+            }
+
+            else
+            {
+                return RedirectToAction("Error");
+            }
         }
 
-        // POST: Rider/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Rider updatedRider)
         {
-            try
-            {
-                // TODO: Add update logic here
+            //I dont see the point in putting a separate int id parameter in here like was done in the example, doesnt the int Id come from the NewRider.RiderId anyway?
+            //Ask Christine to clarify this 
+            string requestAddress = "RiderData/updateRider";
+            Debug.WriteLine("NEW RIDER DATA: " + JsSerializer.Serialize(updatedRider));
+            HttpContent content = new StringContent(JsSerializer.Serialize(updatedRider));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            HttpResponseMessage response = client.PostAsync(requestAddress, content).Result;
 
-                return RedirectToAction("Index");
-            }
-            catch
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                return RedirectToAction("Show", new { id = updatedRider.RiderId });
+            }
+
+            else
+            {
+                return RedirectToAction("Error");
             }
         }
 
-        // GET: Rider/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken()]
         public ActionResult Delete(int id)
         {
-            return View();
-        }
+            //Ask Christine: Cannot send an interger as http content? Doesnt it defeat the purpose of a post request to send the Id in a url?
+            string requestAddress = "riderdata/deleterider/" + id;
+            Debug.WriteLine("GOING TO DELETE RIDER ID: " + requestAddress);
+            HttpContent content = new StringContent("");
+            HttpResponseMessage response = client.PostAsync(requestAddress, content).Result;
+            Debug.WriteLine(response.StatusCode);
 
-        // POST: Rider/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
+            if (response.IsSuccessStatusCode)
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
+                return RedirectToAction("List");
             }
-            catch
+            else
             {
-                return View();
+                return RedirectToAction("Error");
             }
         }
     }

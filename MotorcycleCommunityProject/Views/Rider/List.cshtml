@@ -4,15 +4,11 @@
     ViewBag.Title = "List";
 }
 
-<h2>List</h2>
-@Html.ActionLink("Add Rider", "Create")
-<table>
+<h2>Registered Riders</h2>
+@Html.ActionLink("Create Rider", "Create")
+<table class="table-bordered">
     <thead>
         <tr>
-            <th>
-                Rider ID
-            </th>
-    
             <th>
                 First Name
             </th>
@@ -23,10 +19,7 @@
                 Bio
             </th>
             <th>
-                Bike Size
-            </th>
-            <th>
-                Age
+               
             </th>
         </tr>
     </thead>
@@ -34,12 +27,10 @@
         @foreach(var Rider in Model)
         {
             <tr>
-                <td>@Rider.RiderId</td>
                 <td>@Rider.FirstName</td>
                 <td>@Rider.LastName</td>
                 <td>@Rider.Bio</td>
-                <td>@Rider.BikeSize</td>
-                <td>@Rider.Age</td>
+                <td><a href="Show/@Rider.RiderId">Details</a></td>
             </tr>
         }
     </tbody>

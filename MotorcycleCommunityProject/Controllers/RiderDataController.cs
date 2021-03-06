@@ -48,19 +48,6 @@ namespace MotorcycleCommunityProject.Controllers
             return Ok(RiderDtos);
         }
 
-        // GET: api/Riders/5 - This will be your find method when you implement the search feature later on 
-        [ResponseType(typeof(Rider))]
-        public async Task<IHttpActionResult> GetRider(int id)
-        {
-            Rider rider = await db.Riders.FindAsync(id);
-            if (rider == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(rider);
-        }
-
         // PUT: api/Riders/addRider
         /// <summary>
         /// Recieves a HttpRequest with a rider json object, and adds the rider to the rider database 
@@ -68,7 +55,6 @@ namespace MotorcycleCommunityProject.Controllers
         /// <param Rider="NewRider"></param>
         /// <returns>Returns Http OK status to the Rider/Create mvc controller</returns>
 
-        // DELETE: api/Riders/5
         [ResponseType(typeof(Rider))]
         [HttpPost]
         //FromBody accesses the httpmessage content as the type of object specified
@@ -99,6 +85,7 @@ namespace MotorcycleCommunityProject.Controllers
         [ResponseType(typeof(RiderDto))]
         public IHttpActionResult findRider(int id)
         {
+            Debug.WriteLine("YOU ARE IN THE FIND RIDER API METHOD");
             Rider Rider = db.Riders.Find(id);
 
             if (Rider == null)
@@ -115,22 +102,57 @@ namespace MotorcycleCommunityProject.Controllers
                 BikeSize = Rider.BikeSize,
                 Age = Rider.Age
             };
-
+            
             return Ok(RiderDto);
         }
 
-        protected override void Dispose(bool disposing)
+        [HttpPost]
+        [ResponseType(typeof(void))]
+        public IHttpActionResult updateRider([FromBody] Rider updatedRider)
         {
-            if (disposing)
+            Debug.WriteLine("YOU ARE IN THE UPDATE RIDER API METHOD");
+
+            if (!ModelState.IsValid)
             {
-                db.Dispose();
+                return BadRequest();
             }
-            base.Dispose(disposing);
+
+            db.Entry(updatedRider).State = EntityState.Modified;
+
+           try
+            {
+                db.SaveChanges();
+            }
+
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            //Return No Content 204 message if row is successfully updated
+
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
-        private bool RiderExists(int id)
+        
+        [HttpPost]
+        [ResponseType(typeof(void))]
+        public IHttpActionResult deleteRider(int id)
         {
-            return db.Riders.Count(e => e.RiderId == id) > 0;
+            Debug.WriteLine("IN THE DELETE DATA CONTROLLER");
+            Rider Rider = db.Riders.Find(id);
+            if(Rider==null)
+            {
+                Debug.WriteLine("NO RIDER FOUND");
+                return NotFound();
+            }
+            else
+            {
+                Debug.WriteLine("FOUND RIDER");
+                db.Riders.Remove(Rider);
+                db.SaveChanges();
+                return StatusCode(HttpStatusCode.NoContent);
+            }
         }
     }
 }
